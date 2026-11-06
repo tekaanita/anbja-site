@@ -1,0 +1,44 @@
+backend:
+  name: git-gateway
+  branch: main
+media_folder: images/uploads
+public_folder: /images/uploads
+locale: fr
+collections:
+  - name: contenu
+    label: Contenu du site
+    files:
+      - name: actualites
+        label: Actualités (dons et nouvelles)
+        file: data/actualites.json
+        fields:
+          - label: Actualités
+            name: items
+            widget: list
+            summary: "{{fields.titre}}"
+            fields:
+              - {label: Titre, name: titre, widget: string}
+              - {label: Date, name: date, widget: datetime, date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD"}
+              - {label: Texte, name: texte, widget: text, required: false}
+              - {label: Photo, name: image, widget: image, required: false}
+              - {label: "Lien vidéo (YouTube, Facebook, Instagram, TikTok...)", name: video, widget: string, required: false}
+      - name: videos
+        label: Vidéos
+        file: data/videos.json
+        fields:
+          - label: Vidéos
+            name: items
+            widget: list
+            summary: "{{fields.titre}}"
+            fields:
+              - {label: Titre, name: titre, widget: string}
+              - {label: "Lien de la vidéo", name: lien, widget: string}
+      - name: liens
+        label: Nos réseaux sociaux
+        file: data/liens.json
+        fields:
+          - {label: Lien YouTube, name: youtube, widget: string, required: false}
+          - {label: Lien Facebook, name: facebook, widget: string, required: false}
+          - {label: Lien Instagram, name: instagram, widget: string, required: false}
+          - {label: Lien TikTok, name: tiktok, widget: string, required: false}
+          - {label: Lien chaîne WhatsApp, name: whatsapp, widget: string, required: false}
