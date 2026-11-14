@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faire un don – NBJA</title>
+<style>
+  :root{--bleu:#0b2a8a;--bleu-clair:#2f6bff;--or:#e0a526;--fond:#eef3ff;--texte:#0e1b3d;--erreur:#b3261e}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+    font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--texte);
+    background:radial-gradient(1000px 500px at 20% -10%,#cfe0ff 0,transparent 60%),
+               radial-gradient(800px 500px at 100% 100%,#ffe9b8 0,transparent 55%),var(--fond)}
+  main{max-width:460px;width:100%;padding:32px 26px;border-radius:28px;
+    background:rgba(255,255,255,.62);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.9);box-shadow:0 20px 50px rgba(11,42,138,.15)}
+  h1{margin:0 0 8px;font-size:28px;color:var(--bleu)}
+  .intro{margin:0 0 22px;line-height:1.5;font-size:16px}
+  label{display:block;margin:16px 0 6px;font-weight:600;font-size:15px}
+  input{width:100%;padding:15px 16px;font-size:17px;border-radius:16px;color:var(--texte);
+    border:1px solid #c5d3f5;background:rgba(255,255,255,.85)}
+  input:focus-visible{outline:3px solid var(--bleu-clair);outline-offset:1px}
+  .aide{margin:6px 2px 0;font-size:13.5px;color:#4a5a86}
+  button{width:100%;margin-top:24px;padding:16px;font-size:18px;font-weight:700;color:#fff;border:0;
+    border-radius:999px;cursor:pointer;background:linear-gradient(135deg,var(--bleu-clair),var(--bleu));
+    box-shadow:0 8px 20px rgba(47,107,255,.35)}
+  button:focus-visible{outline:3px solid var(--or);outline-offset:3px}
+  button[disabled]{opacity:.6;cursor:wait}
+  #erreur{min-height:22px;margin:14px 0 0;color:var(--erreur);font-size:15px}
+  .contact{margin-top:20px;font-size:14px;text-align:center;color:#4a5a86}
+  .contact a{color:var(--bleu);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <h1>Faire un don</h1>
+  <p class="intro">Chaque personne donne selon sa volonté. Ton don aide l'association NBJA à soutenir les personnes albinos en RDC.</p>
+
+  <form id="formulaire" novalidate>
+    <label for="montant">Montant du don (FCFA)</label>
+    <input id="montant" name="montant" type="number" inputmode="numeric" min="100" step="1" placeholder="Ex : 5000" required>
+
+    <label for="nom">Ton nom</label>
+    <input id="nom" name="nom" type="text" autocomplete="name" placeholder="Nom et prénom" required>
+
+    <label for="tel">Ton numéro Mobile Money</label>
+    <input id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex : 06 912 12 59" required>
+    <p class="aide">Tu choisiras ton opérateur sur la page de paiement sécurisée.</p>
+
+    <p id="erreur" role="alert" aria-live="polite"></p>
+    <button id="bouton" type="submit">Faire un don</button>
+  </form>
+
+  <p class="contact">Une question ? <a href="https://wa.me/243898939701">Écris-nous sur WhatsApp</a></p>
+</main>
+
+<script>
+  const form = document.getElementById("formulaire");
+  const bouton = document.getElementById("bouton");
+  const erreur = document.getElementById("erreur");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    erreur.textContent = "";
+
+    const montant = Number(form.montant.value);
+    const nom = form.nom.value.trim();
+    const tel = form.tel.value.trim();
+
+    if (!montant || montant < 100) { erreur.textContent = "Entre un montant d'au moins 100 FCFA."; return; }
+    if (!nom) { erreur.textContent = "Entre ton nom."; return; }
+    if (tel.replace(/\D/g, "").length < 8) { erreur.textContent = "Entre un numéro Mobile Money valide."; return; }
+
+    bouton.disabled = true;
+    bouton.textContent = "Ouverture du paiement…";
+
+    try {
+      const res = await fetch("/.netlify/functions/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: montant, name: nom, phone: tel }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.message || "Erreur de paiement.");
+      window.location.href = data.url;
+    } catch (err) {
+      erreur.textContent = err.message || "Le paiement n'a pas pu démarrer. Réessaie.";
+      bouton.disabled = false;
+      bouton.textContent = "Faire un don";
+    }
+  });
+</script>
+</body>
+</html>
