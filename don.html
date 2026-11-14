@@ -43,9 +43,9 @@
     <label for="nom">Ton nom</label>
     <input id="nom" name="nom" type="text" autocomplete="name" placeholder="Nom et prénom" required>
 
-    <label for="tel">Ton numéro Mobile Money</label>
+    <label for="tel">Ton numéro Orange Money</label>
     <input id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex : 06 912 12 59" required>
-    <p class="aide">Tu choisiras ton opérateur sur la page de paiement sécurisée.</p>
+    <p class="aide">Tu paieras avec Orange Money sur la page de paiement sécurisée.</p>
 
     <p id="erreur" role="alert" aria-live="polite"></p>
     <button id="bouton" type="submit">Faire un don</button>
@@ -69,7 +69,7 @@
 
     if (!montant || montant < 100) { erreur.textContent = "Entre un montant d'au moins 100 FCFA."; return; }
     if (!nom) { erreur.textContent = "Entre ton nom."; return; }
-    if (tel.replace(/\D/g, "").length < 8) { erreur.textContent = "Entre un numéro Mobile Money valide."; return; }
+    if (tel.replace(/\D/g, "").length < 8) { erreur.textContent = "Entre un numéro Orange Money valide."; return; }
 
     bouton.disabled = true;
     bouton.textContent = "Ouverture du paiement…";
