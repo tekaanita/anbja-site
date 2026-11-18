@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anbja-site-albinos.netlify.app/sitemap.xml
